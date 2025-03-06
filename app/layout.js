@@ -1,8 +1,8 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Stripe Checkout Demo',
-  description: 'A demo of Stripe Checkout integration with Next.js',
+  title: 'Payment Demo - Stripe & Solana Pay',
+  description: 'A demo of multiple payment options including Stripe and Solana Pay',
 }
 
 export default function RootLayout({ children }) {

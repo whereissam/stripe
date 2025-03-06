@@ -1,0 +1,13 @@
+/* Update SolanaPayButton.module.css */
+.primaryButton {
+  background-color: #9945FF;
+}
+
+.secondaryButton {
+  background-color: white;
+  border: 1px solid #9945FF;
+}
+
+.walletNotice {
+  color: #4b5563;
+}
