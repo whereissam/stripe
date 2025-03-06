@@ -1,3 +1,4 @@
+// components/SolanaPayButton.jsx
 "use client";
 
 import { useState } from "react";
@@ -10,6 +11,8 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { Decimal } from "decimal.js"; // Correct library for Solana Pay
+import { RiWallet3Line, RiQrCodeLine } from "react-icons/ri"; // Optional: for icons
 import styles from "./SolanaPayButton.module.css";
 
 const SolanaPayButton = ({ amount }) => {
@@ -52,16 +55,15 @@ const SolanaPayButton = ({ amount }) => {
 
       const data = await response.json();
 
-      // This is the key fix: properly deserialize the transaction
       try {
-        // Convert base64 string to buffer and then to transaction
+        // Properly deserialize the transaction
         const transactionBuffer = Buffer.from(data.transaction, "base64");
         const tx = Transaction.from(transactionBuffer);
 
-        // Sign the transaction
+        // Sign the transaction with connected wallet
         const signedTx = await wallet.signTransaction(tx);
 
-        // Connect to Solana
+        // Connect to Solana devnet (change to mainnet for production)
         const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
         // Send the signed transaction
@@ -100,36 +102,29 @@ const SolanaPayButton = ({ amount }) => {
   // Generate and show QR code for mobile users
   const handleShowQR = async () => {
     try {
-      // Use a valid default fallback address if no environment variable is set
-      let merchantAddress;
-      try {
-        // Try to use the merchant wallet from env variables
-        merchantAddress = new PublicKey(
-          process.env.NEXT_PUBLIC_MERCHANT_WALLET ||
-            // If not set, use a valid fallback Solana address for testing
-            "11111111111111111111111111111111"
-        );
-      } catch (err) {
-        console.error("Invalid merchant address:", err);
-        // Use a known valid address as fallback
-        merchantAddress = new PublicKey("11111111111111111111111111111111");
-      }
+      // Use a valid Solana address - the system program if nothing else
+      const merchantAddress = new PublicKey(
+        process.env.NEXT_PUBLIC_MERCHANT_WALLET ||
+          "11111111111111111111111111111111"
+      );
+
+      // Using the correct Decimal format that Solana Pay expects
+      // This fixes the "amount.decimalPlaces is not a function" error
+      const solAmount = new Decimal(amount);
 
       // Create the payment URL
       const url = encodeURL({
         recipient: merchantAddress,
-        amount: amount,
+        amount: solAmount,
         label: "Your Company Name",
         message: "Payment for services",
         memo: `payment-${Date.now()}`,
       });
 
-      // Create QR code
-      const qr = createQR(url);
-
-      // Convert to data URL
-      const dataURL = await qr.getRawData("png");
-      setQrCode(dataURL);
+      // Generate QR code using a reliable approach
+      // External QR code service as fallback
+      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url.toString())}&size=300x300`;
+      setQrCode(qrCodeUrl);
       setShowQR(true);
     } catch (err) {
       console.error("Error generating QR code:", err);
@@ -137,54 +132,50 @@ const SolanaPayButton = ({ amount }) => {
     }
   };
 
+  // QR code view
+  if (showQR) {
+    return (
+      <div className={styles.qrContainer}>
+        <h3 className={styles.qrTitle}>
+          Scan with a Solana Pay compatible wallet
+        </h3>
+        {qrCode ? (
+          <img
+            src={qrCode}
+            alt="Solana Pay QR Code"
+            className={styles.qrCode}
+          />
+        ) : (
+          <div className={styles.loadingQR}>Generating QR code...</div>
+        )}
+        <button className={styles.backButton} onClick={() => setShowQR(false)}>
+          Back to payment options
+        </button>
+      </div>
+    );
+  }
+
+  // Normal view (Pay with wallet and QR options)
   return (
     <div className={styles.solanaPayContainer}>
-      {showQR ? (
-        <div className={styles.qrContainer}>
-          <h3 className={styles.qrTitle}>
-            Scan with a Solana Pay compatible wallet
-          </h3>
-          {qrCode && (
-            <img
-              src={qrCode}
-              alt="Solana Pay QR Code"
-              className={styles.qrCode}
-            />
-          )}
-          <button
-            className={styles.backButton}
-            onClick={() => setShowQR(false)}
-          >
-            Back to payment options
-          </button>
+      <button
+        onClick={handleSolanaPayClick}
+        disabled={loadingWallet || !wallet.connected}
+        className={styles.payButton}
+      >
+        {loadingWallet ? "Processing..." : "Pay with Wallet"}
+      </button>
+
+      <button onClick={handleShowQR} className={styles.qrButton}>
+        Show QR Code for Mobile
+      </button>
+
+      {walletError && <div className={styles.walletError}>{walletError}</div>}
+
+      {!wallet.connected && (
+        <div className={styles.walletNotice}>
+          Connect your Solana wallet to pay with SOL
         </div>
-      ) : (
-        <>
-          <button
-            onClick={handleSolanaPayClick}
-            disabled={loadingWallet || !wallet.connected}
-            className={`${styles.solanaButton} ${styles.primaryButton}`}
-          >
-            {loadingWallet ? "Processing..." : "Pay with Solana"}
-          </button>
-
-          <button
-            onClick={handleShowQR}
-            className={`${styles.solanaButton} ${styles.secondaryButton}`}
-          >
-            Show QR Code for Mobile
-          </button>
-
-          {walletError && (
-            <div className={styles.walletError}>{walletError}</div>
-          )}
-
-          {!wallet.connected && (
-            <div className={styles.walletNotice}>
-              Connect your Solana wallet to pay with SOL
-            </div>
-          )}
-        </>
       )}
     </div>
   );

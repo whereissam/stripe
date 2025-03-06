@@ -1,13 +1,113 @@
-/* Update SolanaPayButton.module.css */
-.primaryButton {
-  background-color: #9945FF;
+.solanaPayContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
 }
 
-.secondaryButton {
-  background-color: white;
-  border: 1px solid #9945FF;
+.payButton, .qrButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  width: 100%;
+}
+
+.payButton {
+  background: linear-gradient(135deg, #9945FF 0%, #8A36E3 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(153, 69, 255, 0.2);
+}
+
+.payButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(153, 69, 255, 0.3);
+}
+
+.payButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.qrButton {
+  background: white;
+  color: #9945FF;
+  border: 1px solid rgba(153, 69, 255, 0.4);
+}
+
+.qrButton:hover {
+  background: rgba(153, 69, 255, 0.05);
+}
+
+.payButton svg, .qrButton svg {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.walletError {
+  color: #FF3B30;
+  margin-top: 8px;
+  font-size: 14px;
+  text-align: center;
+  padding: 8px;
+  background-color: rgba(255, 59, 48, 0.1);
+  border-radius: 8px;
 }
 
 .walletNotice {
-  color: #4b5563;
+  color: #8E8E93;
+  margin-top: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.qrContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.qrTitle {
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #484848;
+  text-align: center;
+}
+
+.qrCode {
+  width: 250px;
+  height: 250px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.backButton {
+  background: none;
+  color: #9945FF;
+  border: 1px solid rgba(153, 69, 255, 0.4);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: rgba(153, 69, 255, 0.05);
 }

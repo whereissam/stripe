@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { FaCreditCard } from 'react-icons/fa';
+import { RiCoinsFill } from 'react-icons/ri';
 import styles from './page.module.css';
 import SolanaPayButton from './components/SolanaPayButton';
 import WalletConnectButton from './components/WalletConnectButton';
@@ -43,27 +45,34 @@ export default function Home() {
   const renderPaymentMethod = () => {
     if (paymentMethod === 'stripe') {
       return (
-        <form onSubmit={handleStripeCheckout} className={styles.form}>
+        <div className={styles.paymentMethodContainer}>
           <button 
-            type="submit" 
+            onClick={handleStripeCheckout} 
             className={styles.button} 
             disabled={loading}
           >
-            {loading ? 'Processing...' : 'Proceed to Stripe Checkout'}
+            <FaCreditCard />
+            {loading ? 'Processing...' : 'Pay with Stripe'}
           </button>
-          <button type="button" className={styles.backButton} onClick={handleBack}>
-            Back to Payment Options
+          <button 
+            onClick={handleBack} 
+            className={`${styles.button} ${styles.secondaryButton}`}
+          >
+            Back
           </button>
-        </form>
+        </div>
       );
     } else if (paymentMethod === 'solana') {
       return (
         <WalletProvider>
-          <div className={styles.solanaPayContainer}>
+          <div className={styles.paymentMethodContainer}>
             <WalletConnectButton />
             <SolanaPayButton amount={amount} />
-            <button className={styles.backButton} onClick={handleBack}>
-              Back to Payment Options
+            <button 
+              onClick={handleBack} 
+              className={`${styles.button} ${styles.secondaryButton}`}
+            >
+              Back
             </button>
           </div>
         </WalletProvider>
@@ -77,6 +86,7 @@ export default function Home() {
           className={styles.button} 
           onClick={() => setPaymentMethod('stripe')}
         >
+          <FaCreditCard />
           Pay with Stripe
         </button>
         
@@ -88,6 +98,7 @@ export default function Home() {
           className={`${styles.button} ${styles.solanaButton}`} 
           onClick={() => setPaymentMethod('solana')}
         >
+          <RiCoinsFill />
           Pay with Solana
         </button>
       </div>
@@ -96,7 +107,7 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <h1 className={styles.title}>Stripe Checkout Demo</h1>
+      <h1 className={styles.title}>Checkout</h1>
       
       <div className={styles.checkoutContainer}>
         <div className={styles.formGroup}>
@@ -119,9 +130,8 @@ export default function Home() {
         {error && <div className={styles.error}>{error}</div>}
         
         <div className={styles.infoBox}>
-          <p>This is a demo of multiple payment options.</p>
-          <p>For Stripe testing, use the card number: <strong>4242 4242 4242 4242</strong></p>
-          <p>For Solana Pay, connect your wallet when prompted.</p>
+          <p>This is a secure payment page. Your payment details are encrypted.</p>
+          <p><small>For testing Stripe, use card: <strong>4242 4242 4242 4242</strong></small></p>
         </div>
       </div>
     </main>

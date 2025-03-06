@@ -1,17 +1,32 @@
-@import "tailwindcss";
-
 :root {
-  --foreground-rgb: 50, 50, 50;
-  --background-start-rgb: 245, 245, 245;
-  --background-end-rgb: 255, 255, 255;
+  --primary-color: #FF5A5F; /* Airbnb red */
+  --primary-gradient: linear-gradient(135deg, #FF5A5F 0%, #FF385C 100%);
+  --secondary-color: #007AFF; /* Apple blue */
+  --dark-color: #222222;
+  --light-color: #FFFFFF;
+  --light-gray: #F7F7F7;
+  --medium-gray: #DDDDDD;
+  --text-color: #484848;
+  --success-color: #34C759; /* Apple green */
+  --solana-color: #9945FF;
+  --solana-gradient: linear-gradient(135deg, #9945FF 0%, #7B36E3 100%);
+  --border-radius: 12px;
+  --shadow-sm: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  --transition: all 0.2s ease;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: var(--font-family);
+  background-color: var(--light-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
